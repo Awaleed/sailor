@@ -4,12 +4,12 @@ import 'package:sailor/sailor.dart';
 
 class PageNotFound extends StatelessWidget {
   final String routeName;
-  final BaseArguments args;
-  final NavigationType navigationType;
+  final BaseArguments? args;
+  final NavigationType? navigationType;
 
   const PageNotFound({
-    Key key,
-    @required this.routeName,
+    Key? key,
+    required this.routeName,
     this.args,
     this.navigationType,
   })  : assert(routeName != null),

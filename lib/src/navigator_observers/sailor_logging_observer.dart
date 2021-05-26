@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 
 class SailorLoggingObserver extends NavigatorObserver {
   @override
-  void didPush(Route<dynamic> route, Route<dynamic> previousRoute) {
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     print("[Sailor] Route Pushed: "
         "(Pushed Route='${route?.settings?.name}', "
         "Previous Route='${previousRoute?.settings?.name}', "
@@ -12,7 +12,7 @@ class SailorLoggingObserver extends NavigatorObserver {
   }
 
   @override
-  void didPop(Route route, Route previousRoute) {
+  void didPop(Route route, Route? previousRoute) {
     super.didPop(route, previousRoute);
 
     print("[Sailor] Route Popped: "
@@ -24,7 +24,7 @@ class SailorLoggingObserver extends NavigatorObserver {
   }
 
   @override
-  void didReplace({Route newRoute, Route oldRoute}) {
+  void didReplace({Route? newRoute, Route? oldRoute}) {
     super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
 
     print("[Sailor] Route Replaced: "
@@ -35,7 +35,7 @@ class SailorLoggingObserver extends NavigatorObserver {
   }
 
   @override
-  void didRemove(Route route, Route previousRoute) {
+  void didRemove(Route route, Route? previousRoute) {
     super.didRemove(route, previousRoute);
 
     print("[Sailor] Route Removed: "

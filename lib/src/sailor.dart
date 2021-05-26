@@ -52,9 +52,9 @@ class Sailor {
   /// This is the same [NavigatorState] that is returned by [Navigator.of(context)]
   /// (when there is only a single [Navigator] in Widget tree, i.e. from [MaterialApp]
   /// or [CupertinoApp]).
-  GlobalKey<NavigatorState> _navigatorKey;
+  GlobalKey<NavigatorState>? _navigatorKey;
 
-  GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
+  GlobalKey<NavigatorState>? get navigatorKey => _navigatorKey;
 
   SailorStackObserver _navigationStackObserver = SailorStackObserver();
 
@@ -73,16 +73,14 @@ class Sailor {
   /// Make sure to provide the appropriate type, that is, provide the same type
   /// as the one passed while calling [navigate], else a cast error will be
   /// thrown.
-  static T args<T extends BaseArguments>(BuildContext context) {
-    return (ModalRoute.of(context).settings.arguments as ArgumentsWrapper)
-        .baseArguments as T;
+  static T? args<T extends BaseArguments?>(BuildContext context) {
+    return (ModalRoute.of(context)!.settings.arguments as ArgumentsWrapper).baseArguments as T?;
   }
 
-  static T param<T>(BuildContext context, String key) {
-    final routeSettings = ModalRoute.of(context).settings;
+  static T? param<T>(BuildContext context, String key) {
+    final routeSettings = ModalRoute.of(context)!.settings;
     final argumentsWrapper = (routeSettings.arguments as ArgumentsWrapper);
-    final isParamNotRegistered = argumentsWrapper.routeParams == null ||
-        !argumentsWrapper.routeParams.containsKey(key);
+    final isParamNotRegistered = argumentsWrapper.routeParams == null || !argumentsWrapper.routeParams!.containsKey(key);
 
     if (isParamNotRegistered) {
       throw ParamNotRegisteredError(
@@ -92,23 +90,21 @@ class Sailor {
     }
 
     // Check for request paramter type with registered paramter type.
-    final paramRegisterdType = argumentsWrapper
-        .routeParams[key].paramType; // Type with which param was registed
+    final paramRegisterdType = argumentsWrapper.routeParams![key]!.paramType; // Type with which param was registed
     if (T != paramRegisterdType) {
-      AppLogger.instance
-        ..warning("========================================")
-        ..warning("Mismatching Paramter Type!")
-        ..warning(
-            "Requested param '$key' with type '$T', but was declared with type '$paramRegisterdType'.\n")
-        ..warning(
-            "Make sure to pass the type of variable which used when declaring the 'SailorParam<T>'.")
-        ..warning("========================================");
+      // AppLogger.instance
+      // ..warning("========================================")
+      // ..warning("Mismatching Paramter Type!")
+      // ..warning(
+      //     "Requested param '$key' with type '$T', but was declared with type '$paramRegisterdType'.\n")
+      // ..warning(
+      //     "Make sure to pass the type of variable which used when declaring the 'SailorParam<T>'.")
+      // ..warning("========================================");
     }
 
-    final defaultParamValue = argumentsWrapper.routeParams[key].defaultValue;
-    final paramFromNavigationCall =
-        argumentsWrapper.params != null ? argumentsWrapper.params[key] : null;
-    return (paramFromNavigationCall ?? defaultParamValue) as T;
+    final defaultParamValue = argumentsWrapper.routeParams![key]!.defaultValue;
+    final paramFromNavigationCall = argumentsWrapper.params != null ? argumentsWrapper.params![key] : null;
+    return (paramFromNavigationCall ?? defaultParamValue) as T?;
   }
 
   /// Add a new route to [Sailor].
@@ -121,18 +117,16 @@ class Sailor {
     assert(route != null, "'route' argument cannot be null.");
 
     if (_routeNameMappings.containsKey(route.name)) {
-      AppLogger.instance.warning(
-          "'${route.name}' has already been registered before. Overriding it!");
+      AppLogger.instance!.warning("'${route.name}' has already been registered before. Overriding it!");
     }
 
     // Prepare route params
     final routeParams = <String, SailorParam>{};
 
     if (route.params != null) {
-      route.params.forEach((sailorParam) {
+      route.params!.forEach((sailorParam) {
         if (routeParams.containsKey(sailorParam.name)) {
-          AppLogger.instance.warning(
-              "'${sailorParam.name}' param has already been specified for route $route. Overriding it!");
+          AppLogger.instance!.warning("'${sailorParam.name}' param has already been specified for route $route. Overriding it!");
         }
 
         routeParams[sailorParam.name] = sailorParam;
@@ -155,19 +149,18 @@ class Sailor {
   /// Makes this a callable class. Delegates to [navigate].
   Future<T> call<T>(
     String name, {
-    BaseArguments args,
+    BaseArguments? args,
     NavigationType navigationType = NavigationType.push,
     dynamic result,
-    bool Function(Route<dynamic> route) removeUntilPredicate,
-    List<SailorTransition> transitions,
-    Duration transitionDuration,
-    Map<String, dynamic> params,
-    CustomSailorTransition customTransition,
+    bool Function(Route<dynamic> route)? removeUntilPredicate,
+    List<SailorTransition>? transitions,
+    Duration? transitionDuration,
+    Map<String, dynamic>? params,
+    CustomSailorTransition? customTransition,
   }) {
     assert(name != null);
     assert(navigationType != null);
-    assert(navigationType != NavigationType.pushAndRemoveUntil ||
-        removeUntilPredicate != null);
+    assert(navigationType != NavigationType.pushAndRemoveUntil || removeUntilPredicate != null);
 
     _checkAndThrowRouteNotFound(name, args, navigationType);
 
@@ -209,20 +202,19 @@ class Sailor {
   /// transitions or delegate to system's own transitions.
   Future<T> navigate<T>(
     String name, {
-    BaseArguments args,
+    BaseArguments? args,
     NavigationType navigationType = NavigationType.push,
     dynamic result,
-    bool Function(Route<dynamic> route) removeUntilPredicate,
-    List<SailorTransition> transitions,
-    Duration transitionDuration,
-    Curve transitionCurve,
-    Map<String, dynamic> params,
-    CustomSailorTransition customTransition,
+    bool Function(Route<dynamic> route)? removeUntilPredicate,
+    List<SailorTransition>? transitions,
+    Duration? transitionDuration,
+    Curve? transitionCurve,
+    Map<String, dynamic>? params,
+    CustomSailorTransition? customTransition,
   }) {
     assert(name != null);
     assert(navigationType != null);
-    assert(navigationType != NavigationType.pushAndRemoveUntil ||
-        removeUntilPredicate != null);
+    assert(navigationType != NavigationType.pushAndRemoveUntil || removeUntilPredicate != null);
 
     _checkAndThrowRouteNotFound(name, args, navigationType);
 
@@ -303,36 +295,35 @@ class Sailor {
   /// [params] are key pair values that can be passed when navigating to a route.
   Future<dynamic> _navigate(
     String name,
-    BaseArguments args,
+    BaseArguments? args,
     NavigationType navigationType,
     dynamic result,
-    bool Function(Route<dynamic> route) removeUntilPredicate,
-    List<SailorTransition> transitions,
-    Duration transitionDuration,
-    Curve transitionCurve,
-    Map<String, dynamic> params,
-    CustomSailorTransition customTransition,
+    bool Function(Route<dynamic> route)? removeUntilPredicate,
+    List<SailorTransition>? transitions,
+    Duration? transitionDuration,
+    Curve? transitionCurve,
+    Map<String, dynamic>? params,
+    CustomSailorTransition? customTransition,
   ) async {
     final routeParams = _routeParamsMappings[name];
     if (routeParams != null) {
       routeParams.forEach((key, value) {
         // Type of paramter passed should be the same
         // when type is declared.
-        if (params.containsKey(value.name) && params[value.name] != null) {
+        if (params!.containsKey(value.name) && params[value.name] != null) {
           final passedParamType = params[value.name].runtimeType;
           if (passedParamType != value.paramType) {
-            AppLogger.instance.warning("Invalid Parameter Type! "
+            AppLogger.instance!.warning("Invalid Parameter Type! "
                 "'${value.name}' is declared with a type '${value.paramType}', "
                 "but a '$passedParamType' was passed!");
           }
         }
 
         // All paramters that are 'required' should be passed.
-        bool isMissingRequiredParam = value.isRequired &&
-            (params == null || !params.containsKey(value.name));
+        bool isMissingRequiredParam = value.isRequired && (params == null || !params.containsKey(value.name));
 
         if (isMissingRequiredParam) {
-          AppLogger.instance.warning(ParameterNotProvidedError(
+          AppLogger.instance!.warning(ParameterNotProvidedError(
             paramKey: value.name,
             routeName: name,
           ).toString());
@@ -353,13 +344,11 @@ class Sailor {
     // Evaluate if the route can be opend using route guard.
     final route = _routeNameMappings[name];
 
-    if (route != null &&
-        route.routeGuards != null &&
-        route.routeGuards.isNotEmpty) {
+    if (route != null && route.routeGuards != null && route.routeGuards!.isNotEmpty) {
       bool canOpen = true;
-      for (SailorRouteGuard routeGuard in route.routeGuards) {
+      for (SailorRouteGuard routeGuard in route.routeGuards!) {
         final result = await routeGuard.canOpen(
-          navigatorKey.currentContext,
+          navigatorKey!.currentContext,
           argsWrapper.baseArguments,
           ParamMap(name, routeParams, params),
         );
@@ -369,31 +358,20 @@ class Sailor {
         }
       }
       if (canOpen != true) {
-        AppLogger.instance.warning("'$name' route rejected by route guard!");
+        AppLogger.instance!.warning("'$name' route rejected by route guard!");
         return null;
       }
     }
 
     switch (navigationType) {
       case NavigationType.push:
-        return this
-            .navigatorKey
-            .currentState
-            .pushNamed(name, arguments: argsWrapper);
+        return this.navigatorKey!.currentState!.pushNamed(name, arguments: argsWrapper);
       case NavigationType.pushReplace:
-        return this
-            .navigatorKey
-            .currentState
-            .pushReplacementNamed(name, result: result, arguments: argsWrapper);
+        return this.navigatorKey!.currentState!.pushReplacementNamed(name, result: result, arguments: argsWrapper);
       case NavigationType.pushAndRemoveUntil:
-        return this.navigatorKey.currentState.pushNamedAndRemoveUntil(
-            name, removeUntilPredicate,
-            arguments: argsWrapper);
+        return this.navigatorKey!.currentState!.pushNamedAndRemoveUntil(name, removeUntilPredicate!, arguments: argsWrapper);
       case NavigationType.popAndPushNamed:
-        return this
-            .navigatorKey
-            .currentState
-            .popAndPushNamed(name, result: result, arguments: argsWrapper);
+        return this.navigatorKey!.currentState!.popAndPushNamed(name, result: result, arguments: argsWrapper);
     }
 
     return null;
@@ -403,14 +381,14 @@ class Sailor {
   /// Make sure to use the correct name while calling navigate.
   void _checkAndThrowRouteNotFound(
     String name,
-    BaseArguments args,
+    BaseArguments? args,
     NavigationType navigationType,
   ) {
     assert(name != null);
 
     if (!_routeNameMappings.containsKey(name)) {
       if (this.options.handleNameNotFoundUI) {
-        this.navigatorKey.currentState.push(
+        this.navigatorKey!.currentState!.push(
           MaterialPageRoute(builder: (BuildContext context) {
             return PageNotFound(
               routeName: name,
@@ -426,12 +404,12 @@ class Sailor {
 
   /// Delegation for [Navigator.pop].
   void pop([dynamic result]) {
-    this.navigatorKey.currentState.pop(result);
+    this.navigatorKey!.currentState!.pop(result);
   }
 
   /// Delegation for [Navigator.popUntil].
   void popUntil(void Function(Route<dynamic>) predicate) {
-    this.navigatorKey.currentState.popUntil(predicate);
+    this.navigatorKey!.currentState!.popUntil(predicate as bool Function(Route<dynamic>));
   }
 
   /// Generates the [RouteFactory] which builds a [Route] on request.
@@ -440,19 +418,19 @@ class Sailor {
   /// [addRoute] method.
   RouteFactory generator() {
     return (settings) {
-      final route = _routeNameMappings[settings.name];
+      final route = _routeNameMappings[settings.name!];
 
       if (route == null) return null;
 
       // TODO(gurleensethi): Check if this is a sailor route or a normal route.
-      ArgumentsWrapper argsWrapper = settings.arguments as ArgumentsWrapper;
+      ArgumentsWrapper? argsWrapper = settings.arguments as ArgumentsWrapper?;
 
       // If for some reason the arguments passed themself are null.
       if (argsWrapper == null) {
         argsWrapper = ArgumentsWrapper();
       }
 
-      final BaseArguments baseArgs = argsWrapper.baseArguments;
+      final BaseArguments? baseArgs = argsWrapper.baseArguments;
 
       // Select which transitions to use.
       // Priority:
@@ -461,33 +439,23 @@ class Sailor {
       //   3. Default transition from SailorOptions.
       final List<SailorTransition> transitions = [];
 
-      final bool areTransitionsProvidedInNavigate =
-          argsWrapper.transitions != null && argsWrapper.transitions.isNotEmpty;
-      final bool areTransitionsProvidedInRouteDeclaration =
-          route.defaultTransitions != null &&
-              route.defaultTransitions.isNotEmpty;
-      final bool areTransitionsProvidedInSailorOptions =
-          this.options.defaultTransitions != null;
+      final bool areTransitionsProvidedInNavigate = argsWrapper.transitions != null && argsWrapper.transitions!.isNotEmpty;
+      final bool areTransitionsProvidedInRouteDeclaration = route.defaultTransitions != null && route.defaultTransitions!.isNotEmpty;
+      final bool areTransitionsProvidedInSailorOptions = this.options.defaultTransitions != null;
 
       if (areTransitionsProvidedInNavigate) {
-        transitions.addAll(argsWrapper.transitions);
+        transitions.addAll(argsWrapper.transitions!);
       } else if (areTransitionsProvidedInRouteDeclaration) {
-        transitions.addAll(route.defaultTransitions);
+        transitions.addAll(route.defaultTransitions!);
       } else if (areTransitionsProvidedInSailorOptions) {
-        transitions.addAll(this.options.defaultTransitions);
+        transitions.addAll(this.options.defaultTransitions!);
       }
 
-      final transitionDuration = argsWrapper.transitionDuration ??
-          route.defaultTransitionDuration ??
-          this.options.defaultTransitionDuration;
+      final transitionDuration = argsWrapper.transitionDuration ?? route.defaultTransitionDuration ?? this.options.defaultTransitionDuration;
 
-      final transitionCurve = argsWrapper.transitionCurve ??
-          route.defaultTransitionCurve ??
-          this.options.defaultTransitionCurve;
+      final transitionCurve = argsWrapper.transitionCurve ?? route.defaultTransitionCurve ?? this.options.defaultTransitionCurve;
 
-      final customTransition = argsWrapper.customTransition ??
-          route.customTransition ??
-          this.options.customTransition;
+      final customTransition = argsWrapper.customTransition ?? route.customTransition ?? this.options.customTransition;
 
       bool shouldUseCustomTransition = customTransition != null;
       if (argsWrapper.customTransition != null) {
@@ -522,7 +490,7 @@ class Sailor {
           baseArgs ?? route.defaultArgs,
           ParamMap(
             route.name,
-            argsWrapper.routeParams,
+            argsWrapper!.routeParams,
             argsWrapper.params,
           ),
         ),
@@ -536,8 +504,8 @@ class Sailor {
         settings: settings,
         builder: (BuildContext context) {
           return PageNotFound(
-            routeName: settings.name,
-            args: settings.arguments,
+            routeName: settings.name!,
+            args: settings.arguments as BaseArguments?,
           );
         },
       );
@@ -547,14 +515,13 @@ class Sailor {
 
 class ParamMap {
   final String _routeName;
-  final Map<String, SailorParam> _routeParams;
-  final Map<String, dynamic> _params;
+  final Map<String, SailorParam>? _routeParams;
+  final Map<String, dynamic>? _params;
 
   ParamMap(this._routeName, this._routeParams, this._params);
 
-  T param<T>(String key) {
-    final isParamNotRegistered =
-        _routeParams == null || !_routeParams.containsKey(key);
+  T? param<T>(String key) {
+    final isParamNotRegistered = _routeParams == null || !_routeParams!.containsKey(key);
 
     if (isParamNotRegistered) {
       throw ParamNotRegisteredError(
@@ -563,8 +530,8 @@ class ParamMap {
       );
     }
 
-    final defaultParamValue = _routeParams[key].defaultValue;
-    final paramFromNavigationCall = _params != null ? _params[key] : null;
-    return (paramFromNavigationCall ?? defaultParamValue) as T;
+    final defaultParamValue = _routeParams![key]!.defaultValue;
+    final paramFromNavigationCall = _params != null ? _params![key] : null;
+    return (paramFromNavigationCall ?? defaultParamValue) as T?;
   }
 }

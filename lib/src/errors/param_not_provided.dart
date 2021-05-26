@@ -5,8 +5,8 @@ class ParameterNotProvidedError extends Error {
   final String routeName;
 
   ParameterNotProvidedError({
-    @required this.routeName,
-    @required this.paramKey,
+    required this.routeName,
+    required this.paramKey,
   });
 
   @override

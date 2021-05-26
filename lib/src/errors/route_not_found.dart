@@ -4,7 +4,7 @@ class RouteNotFoundError extends Error {
   final String name;
 
   RouteNotFoundError({
-    @required this.name,
+    required this.name,
   });
 
   @override
